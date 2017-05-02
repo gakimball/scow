@@ -11,6 +11,7 @@ const ZipFile = require('yazl').ZipFile;
 const cwd = require('prepend-cwd');
 const streamToPromise = require('stream-to-promise');
 const mkdirp = require('mkdirp-promise');
+const uniq = require('lodash.uniq');
 
 const readFile = pify(fs.readFile);
 
@@ -41,7 +42,7 @@ module.exports = (input, output) => {
       // Create ZIP file with HTML + image
       .then(res => {
         const html = res[0];
-        const srcs = res[1];
+        const srcs = uniq(res[1]);
 
         // Create a ZIP file and point it to a write stream
         const zip = new ZipFile();
