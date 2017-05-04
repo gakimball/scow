@@ -15,9 +15,10 @@ const uniq = require('lodash.uniq');
 
 const readFile = pify(fs.readFile);
 
-module.exports = (input, output) => {
+module.exports = (input, output, opts) => {
   input = cwd(input);
   output = cwd(output);
+  opts = opts || {};
 
   /**
    * Create a ZIP bundle for an HTML email. The bundle will contain an inlined and compressed HTML file, and all images referenced in `<img>` tags.
@@ -31,12 +32,21 @@ module.exports = (input, output) => {
 
     return readFile(file)
       // Inline CSS into HTML
-      .then(contents => inlineCss(contents.toString(), {url: `file://${file}`}))
-      // Compress HTML
-      .then(html => htmlMinifier(html, {
-        collapseWhitespace: true,
-        minifyCSS: true
+      .then(contents => inlineCss(contents.toString(), {
+        url: `file://${file}`,
+        removeStyleTags: false
       }))
+      // Compress HTML
+      .then(html => {
+        if (opts.compress) {
+          return htmlMinifier(html, {
+            collapseWhitespace: true,
+            minifyCSS: true
+          });
+        }
+
+        return html;
+      })
       // Get all image paths referenced in in HTML
       .then(html => [html, getImgSrc(html)])
       // Create ZIP file with HTML + image

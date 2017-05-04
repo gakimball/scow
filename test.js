@@ -31,23 +31,32 @@ describe('scow()', () => {
       .pipe(unzipper.ParseOne(/index.html/))
       .on('entry', entry => {
         entry.buffer().then(contents => {
-          expect(contents.toString()).to.contain('style="height:100vh');
+          expect(contents.toString()).to.contain('style="height: 100vh');
           done();
         }).catch(done);
       })
       .on('error', done);
   });
 
-  it('compresses the HTML', done => {
-    fs.createReadStream(zipPath)
-      .pipe(unzipper.ParseOne(/index.html/))
-      .on('entry', entry => {
-        entry.buffer().then(contents => {
-          expect(contents.toString()).to.contain('<!doctype html><html><head>');
-          done();
-        }).catch(done);
-      })
-      .on('error', done);
+  it('allows HTML to be compressed', done => {
+    const outputDir = tempy.directory();
+    const zipPath = path.join(outputDir, 'index.zip');
+    const opts = {
+      compress: true
+    };
+    const test = () => {
+      fs.createReadStream(zipPath)
+        .pipe(unzipper.ParseOne(/index.html/))
+        .on('entry', entry => {
+          entry.buffer().then(contents => {
+            expect(contents.toString()).to.contain('<!doctype html><html><head>');
+            done();
+          }).catch(done);
+        })
+        .on('error', done);
+    };
+
+    scow('fixtures/*.html', outputDir, opts).then(test).catch(done);
   });
 
   it('bundles referenced images', done => {
@@ -78,6 +87,26 @@ describe('scow CLI', () => {
           done();
         });
       })
+      .catch(done);
+  });
+
+  it('allows HTML to be compressed', done => {
+    const outputDir = tempy.directory();
+    const zipPath = path.join(outputDir, 'index.zip');
+    const test = () => {
+      fs.createReadStream(zipPath)
+        .pipe(unzipper.ParseOne(/index.html/))
+        .on('entry', entry => {
+          entry.buffer().then(contents => {
+            expect(contents.toString()).to.contain('<!doctype html><html><head>');
+            done();
+          }).catch(done);
+        })
+        .on('error', done);
+    };
+
+    execa(path.join(__dirname, 'cli.js'), ['fixtures/*.html', outputDir, '--compress'])
+      .then(test)
       .catch(done);
   });
 });

@@ -6,7 +6,7 @@
 
 When uploading an HTML email to an ESP like Mailchimp or Campaign Monitor, typically you'll be uploading a single HTML file with inlined CSS, and all the assets that email references.
 
-Point Scow at an HTML email, and it will inline the CSS, compress the HTML, identify images the page uses, and bundle all of it into a tidy ZIP file. Your emails will be seaworthy in no time.
+Point Scow at an HTML email, and it will inline the CSS, optionally compress the HTML, identify images the page uses, and bundle all of it into a tidy ZIP file. Your emails will be seaworthy in no time.
 
 ## Installation
 
@@ -32,6 +32,8 @@ Bundle one or more HTML emails into an equal number of ZIP files.
 
 - **input** (String or Array of Strings): HTML files(s) to bundle. Can be a path to one file, or a glob pattern matching multiple files. One ZIP bundle is made for each input file.
 - **output** (String): path to folder to output ZIP files to.
+- **options** (Object): output options.
+  - **compress** (Boolean): compress HTML, and CSS within `<style>` elements. Defaults to `false`.
 
 Returns a Promise that resolves with the path or paths to the created ZIP files.
 
@@ -42,6 +44,9 @@ Install Scow globally, or reference it in an npm script, to use the CLI.
 ```
   Usage
     $ scow <input> <output>
+
+  Options
+    -c, --compress  Compress HTML
 
   Examples
     $ scow emails/*.html dist
