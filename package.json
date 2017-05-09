@@ -1,6 +1,6 @@
 {
   "name": "scow",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "HTML email inliner and bundler",
   "main": "index.js",
   "bin": {
