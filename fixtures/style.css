@@ -2,3 +2,9 @@
   width: 100vw;
   height: 100vh;
 }
+
+@media screen {
+  .image {
+    width: 50vw;
+  }
+}

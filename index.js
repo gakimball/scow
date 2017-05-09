@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const pify = require('pify');
 const globby = require('globby');
-const inlineCss = require('inline-css');
+const juice = require('juice');
 const htmlMinifier = require('html-minifier').minify;
 const getImgSrc = require('get-img-src');
 const ZipFile = require('yazl').ZipFile;
@@ -14,6 +14,7 @@ const mkdirp = require('mkdirp-promise');
 const uniq = require('lodash.uniq');
 
 const readFile = pify(fs.readFile);
+const juiceResources = pify(juice.juiceResources);
 
 module.exports = (input, output, opts) => {
   input = cwd(input);
@@ -32,9 +33,13 @@ module.exports = (input, output, opts) => {
 
     return readFile(file)
       // Inline CSS into HTML
-      .then(contents => inlineCss(contents.toString(), {
-        url: `file://${file}`,
-        removeStyleTags: false
+      .then(contents => juiceResources(contents.toString(), {
+        webResources: {
+          images: false,
+          svgs: false,
+          scripts: false,
+          relativeTo: path.dirname(file)
+        }
       }))
       // Compress HTML
       .then(html => {

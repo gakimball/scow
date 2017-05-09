@@ -31,7 +31,19 @@ describe('scow()', () => {
       .pipe(unzipper.ParseOne(/index.html/))
       .on('entry', entry => {
         entry.buffer().then(contents => {
-          expect(contents.toString()).to.contain('style="height: 100vh');
+          expect(contents.toString()).to.contain('style="width: 100vw');
+          done();
+        }).catch(done);
+      })
+      .on('error', done);
+  });
+
+  it('holds media query CSS in a <style> tag', done => {
+    fs.createReadStream(zipPath)
+      .pipe(unzipper.ParseOne(/index.html/))
+      .on('entry', entry => {
+        entry.buffer().then(contents => {
+          expect(contents.toString()).to.contain('@media screen');
           done();
         }).catch(done);
       })

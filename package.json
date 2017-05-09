@@ -46,7 +46,7 @@
     "get-img-src": "^1.0.0",
     "globby": "^6.1.0",
     "html-minifier": "^3.4.3",
-    "inline-css": "^2.2.2",
+    "juice": "^4.0.2",
     "lodash.uniq": "^4.5.0",
     "meow": "^3.7.0",
     "mkdirp-promise": "^5.0.1",
