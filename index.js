@@ -12,6 +12,7 @@ const cwd = require('prepend-cwd');
 const streamToPromise = require('stream-to-promise');
 const mkdirp = require('mkdirp-promise');
 const uniq = require('lodash.uniq');
+const styleBroom = require('style-broom');
 
 const readFile = pify(fs.readFile);
 const juiceResources = pify(juice.juiceResources);
@@ -41,12 +42,18 @@ module.exports = (input, output, opts) => {
           relativeTo: path.dirname(file)
         }
       }))
+      // Remove unused CSS
+      .then(html => styleBroom(html))
       // Compress HTML
       .then(html => {
         if (opts.compress) {
           return htmlMinifier(html, {
             collapseWhitespace: true,
-            minifyCSS: true
+            conservativeCollapse: true,
+            html5: false,
+            keepClosingSlash: true,
+            minifyCSS: true,
+            preserveLineBreaks: true
           });
         }
 

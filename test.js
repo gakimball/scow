@@ -50,6 +50,18 @@ describe('scow()', () => {
       .on('error', done);
   });
 
+  it('removes unused CSS from <style> tag', done => {
+    fs.createReadStream(zipPath)
+      .pipe(unzipper.ParseOne(/index.html/))
+      .on('entry', entry => {
+        entry.buffer().then(contents => {
+          expect(contents.toString()).to.not.contain('.unused');
+          done();
+        }).catch(done);
+      })
+      .on('error', done);
+  });
+
   it('allows HTML to be compressed', done => {
     const outputDir = tempy.directory();
     const zipPath = path.join(outputDir, 'index.zip');
@@ -61,7 +73,7 @@ describe('scow()', () => {
         .pipe(unzipper.ParseOne(/index.html/))
         .on('entry', entry => {
           entry.buffer().then(contents => {
-            expect(contents.toString()).to.contain('<!doctype html><html><head>');
+            expect(contents.toString()).to.contain('<!doctype html>\n<html>\n<head>');
             done();
           }).catch(done);
         })
@@ -110,7 +122,7 @@ describe('scow CLI', () => {
         .pipe(unzipper.ParseOne(/index.html/))
         .on('entry', entry => {
           entry.buffer().then(contents => {
-            expect(contents.toString()).to.contain('<!doctype html><html><head>');
+            expect(contents.toString()).to.contain('<!doctype html>\n<html>\n<head>');
             done();
           }).catch(done);
         })

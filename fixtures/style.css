@@ -8,3 +8,7 @@
     width: 50vw;
   }
 }
+
+.unused {
+  color: red;
+}
