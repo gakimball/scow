@@ -53,7 +53,7 @@
     "pify": "^2.3.0",
     "prepend-cwd": "^1.0.0",
     "stream-to-promise": "^2.2.0",
-    "style-broom": "^1.0.0",
+    "style-broom": "^1.0.1",
     "yazl": "^2.4.2"
   }
 }
