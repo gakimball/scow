@@ -13,6 +13,8 @@ const streamToPromise = require('stream-to-promise');
 const mkdirp = require('mkdirp-promise');
 const uniq = require('lodash.uniq');
 const styleBroom = require('style-broom');
+const cheerio = require('cheerio');
+const mqPacker = require('css-mqpacker');
 
 const readFile = pify(fs.readFile);
 const juiceResources = pify(juice.juiceResources);
@@ -44,6 +46,14 @@ module.exports = (input, output, opts) => {
       }))
       // Remove unused CSS
       .then(html => styleBroom(html))
+      // Merge media queries
+      .then(html => {
+        if (opts.compress) {
+          return combineMediaQueries(html);
+        }
+
+        return html;
+      })
       // Compress HTML
       .then(html => {
         if (opts.compress) {
@@ -99,3 +109,20 @@ module.exports = (input, output, opts) => {
     .then(() => globby(input))
     .then(paths => Promise.all(paths.map(bundle)));
 };
+
+/**
+ * Combine identical media queries in the CSS of the <style> tags of an HTML string.
+ * @param {String} html - Input HTML.
+ * @returns {String} Modified HTML.
+ */
+function combineMediaQueries(html) {
+  const $ = cheerio.load(html);
+
+  $('style').each((i, elem) => {
+    const css = elem.children[0].data;
+    const newCss = mqPacker.pack(css).css;
+    elem.children[0].data = newCss;
+  });
+
+  return $.html();
+}

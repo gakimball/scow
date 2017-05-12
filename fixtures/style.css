@@ -12,3 +12,9 @@
 .unused {
   color: red;
 }
+
+@media screen {
+  .image {
+    height: 0;
+  }
+}

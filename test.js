@@ -83,6 +83,27 @@ describe('scow()', () => {
     scow('fixtures/*.html', outputDir, opts).then(test).catch(done);
   });
 
+  it('allows media queries to be meregd', done => {
+    const outputDir = tempy.directory();
+    const zipPath = path.join(outputDir, 'index.zip');
+    const opts = {
+      compress: true
+    };
+    const test = () => {
+      fs.createReadStream(zipPath)
+        .pipe(unzipper.ParseOne(/index.html/))
+        .on('entry', entry => {
+          entry.buffer().then(contents => {
+            expect(contents.toString().match(/@media/g)).to.have.a.lengthOf(1);
+            done();
+          }).catch(done);
+        })
+        .on('error', done);
+    };
+
+    scow('fixtures/*.html', outputDir, opts).then(test).catch(done);
+  });
+
   it('bundles referenced images', done => {
     let found = false;
 
