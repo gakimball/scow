@@ -6,7 +6,16 @@
 
 When uploading an HTML email to an ESP like Mailchimp or Campaign Monitor, typically you'll be uploading a single HTML file with inlined CSS, and all the assets that email references.
 
-Point Scow at an HTML email, and it will inline the CSS, optionally compress the HTML, identify images the page uses, and bundle all of it into a tidy ZIP file. Your emails will be seaworthy in no time.
+Point Scow at an HTML email (or a set of them), and it will:
+
+- Inline any CSS in `<link>` or `<style>` tags into the HTML
+- Preserve @ rules like media queries in `<style>` tags
+- Remove unused CSS from the `<style>` tags
+- If compression is enabled:
+  - Compress the HTML output, but preserve whitespace
+  - Compress the CSS within `<style>` tags and `style` attributes
+  - Merge identical media queries within `<style>` tags
+- Bundle the email and all assets linked to in `<img>` tags into one ZIP file
 
 ## Installation
 
