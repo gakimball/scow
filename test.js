@@ -1,5 +1,5 @@
 /* eslint-env mocha */
-/* eslint-disable new-cap */
+/* eslint-disable new-cap, max-nested-callbacks */
 
 'use strict';
 
@@ -14,9 +14,32 @@ const scow = require('.');
 describe('scow()', () => {
   const outputDir = tempy.directory();
   const zipPath = path.join(outputDir, 'index.zip');
+  let outputHtml;
+  let outputHtmlCompressed;
+
+  const createTestFile = opts => {
+    const output = opts.compress ? tempy.directory() : outputDir;
+
+    return scow('fixtures/*.html', output, opts).then(() => new Promise((resolve, reject) => {
+      fs.createReadStream(path.join(output, 'index.zip'))
+        .pipe(unzipper.ParseOne(/index.html/))
+        .on('entry', entry => {
+          entry.buffer().then(contents => {
+            resolve(contents.toString());
+          }).catch(reject);
+        })
+        .on('error', reject);
+    }));
+  };
 
   before(() => {
-    return scow('fixtures/*.html', outputDir);
+    return Promise.all([
+      createTestFile({}),
+      createTestFile({compress: true})
+    ]).then(res => {
+      outputHtml = res[0];
+      outputHtmlCompressed = res[1];
+    });
   });
 
   it('names the ZIP file the same as the original HTML file', done => {
@@ -26,82 +49,24 @@ describe('scow()', () => {
     });
   });
 
-  it('inlines CSS into HTML', done => {
-    fs.createReadStream(zipPath)
-      .pipe(unzipper.ParseOne(/index.html/))
-      .on('entry', entry => {
-        entry.buffer().then(contents => {
-          expect(contents.toString()).to.contain('style="width: 100vw');
-          done();
-        }).catch(done);
-      })
-      .on('error', done);
+  it('inlines CSS into HTML', () => {
+    expect(outputHtml).to.contain('style="width: 100vw');
   });
 
-  it('holds media query CSS in a <style> tag', done => {
-    fs.createReadStream(zipPath)
-      .pipe(unzipper.ParseOne(/index.html/))
-      .on('entry', entry => {
-        entry.buffer().then(contents => {
-          expect(contents.toString()).to.contain('@media screen');
-          done();
-        }).catch(done);
-      })
-      .on('error', done);
+  it('holds media query CSS in a <style> tag', () => {
+    expect(outputHtml).to.contain('@media screen');
   });
 
-  it('removes unused CSS from <style> tag', done => {
-    fs.createReadStream(zipPath)
-      .pipe(unzipper.ParseOne(/index.html/))
-      .on('entry', entry => {
-        entry.buffer().then(contents => {
-          expect(contents.toString()).to.not.contain('.unused');
-          done();
-        }).catch(done);
-      })
-      .on('error', done);
+  it('removes unused CSS from <style> tag', () => {
+    expect(outputHtml).to.not.contain('.unused');
   });
 
-  it('allows HTML to be compressed', done => {
-    const outputDir = tempy.directory();
-    const zipPath = path.join(outputDir, 'index.zip');
-    const opts = {
-      compress: true
-    };
-    const test = () => {
-      fs.createReadStream(zipPath)
-        .pipe(unzipper.ParseOne(/index.html/))
-        .on('entry', entry => {
-          entry.buffer().then(contents => {
-            expect(contents.toString()).to.contain('<!doctype html>\n<html>\n<head>');
-            done();
-          }).catch(done);
-        })
-        .on('error', done);
-    };
-
-    scow('fixtures/*.html', outputDir, opts).then(test).catch(done);
+  it('allows HTML to be compressed', () => {
+    expect(outputHtmlCompressed).to.contain('<!doctype html>\n<html>\n<head>');
   });
 
-  it('allows media queries to be meregd', done => {
-    const outputDir = tempy.directory();
-    const zipPath = path.join(outputDir, 'index.zip');
-    const opts = {
-      compress: true
-    };
-    const test = () => {
-      fs.createReadStream(zipPath)
-        .pipe(unzipper.ParseOne(/index.html/))
-        .on('entry', entry => {
-          entry.buffer().then(contents => {
-            expect(contents.toString().match(/@media/g)).to.have.a.lengthOf(1);
-            done();
-          }).catch(done);
-        })
-        .on('error', done);
-    };
-
-    scow('fixtures/*.html', outputDir, opts).then(test).catch(done);
+  it('allows media queries to be meregd', () => {
+    expect(outputHtmlCompressed.match(/@media/g)).to.have.a.lengthOf(1);
   });
 
   it('bundles referenced images', done => {
