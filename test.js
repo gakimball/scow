@@ -43,8 +43,8 @@ describe('scow()', () => {
   });
 
   it('names the ZIP file the same as the original HTML file', done => {
-    fs.exists(zipPath, err => {
-      expect(err).to.equal(true);
+    fs.access(zipPath, fs.F_OK, err => {
+      expect(err).to.equal(null);
       done();
     });
   });
@@ -92,8 +92,8 @@ describe('scow CLI', () => {
       .then(() => {
         const zipPath = path.join(outputDir, 'index.zip');
 
-        fs.exists(zipPath, err => {
-          expect(err).to.equal(true);
+        fs.stat(zipPath, fs.F_OK, err => {
+          expect(err).to.equal(null);
           done();
         });
       })
