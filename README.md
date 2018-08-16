@@ -2,7 +2,8 @@
 
 > HTML email inliner and bundler
 
-[![Travis](https://img.shields.io/travis/gakimball/scow.svg?maxAge=2592000)](https://travis-ci.org/gakimball/scow) [![npm](https://img.shields.io/npm/v/scow.svg?maxAge=2592000)](https://www.npmjs.com/package/scow)
+[![Travis](https://badgen.now.sh/travis/gakimball/scow)](https://travis-ci.org/gakimball/scow) [![npm](https://badgen.now.sh/npm/v/scow)](https://www.npmjs.com/package/scow)
+![Anchors Aweigh](https://badgen.now.sh/badge/anchors/aweigh/cyan)
 
 When uploading an HTML email to an ESP like Mailchimp or Campaign Monitor, typically you'll be uploading a single HTML file with inlined CSS, and all the assets that email references.
 
