@@ -92,7 +92,7 @@ describe('scow CLI', () => {
       .then(() => {
         const zipPath = path.join(outputDir, 'index.zip');
 
-        fs.stat(zipPath, fs.F_OK, err => {
+        fs.access(zipPath, (fs.constants || fs).F_OK, err => {
           expect(err).to.equal(null);
           done();
         });
