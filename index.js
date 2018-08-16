@@ -105,11 +105,17 @@ module.exports = (input, output, opts) => {
 
         // Add files for each image referenced in HTML
         srcs.forEach(src => {
-          if (path.isAbsolute(src) || src.indexOf('..') === 0) {
+          const filePath = path.resolve(base, src);
+
+          if (path.isAbsolute(src) || src.startsWith('..')) {
             console.log(`Warning for file ${file}`);
             console.log('Scow can\'t bundle files with absolute paths or "../" segments.');
           } else {
-            zip.addFile(path.resolve(base, src), src);
+            // Skip files that don't exist
+            try {
+              fs.accessSync(filePath, (fs.constants || fs).F_OK);
+              zip.addFile(filePath, src);
+            } catch (e) {}
           }
         });
 
