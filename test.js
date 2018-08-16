@@ -43,7 +43,7 @@ describe('scow()', () => {
   });
 
   it('names the ZIP file the same as the original HTML file', done => {
-    fs.access(zipPath, fs.F_OK, err => {
+    fs.access(zipPath, (fs.constants || fs).F_OK, err => {
       expect(err).to.equal(null);
       done();
     });
@@ -69,19 +69,12 @@ describe('scow()', () => {
     expect(outputHtmlCompressed.match(/@media/g)).to.have.a.lengthOf(1);
   });
 
-  it('bundles referenced images', done => {
-    let found = false;
+  it('bundles referenced images', () => {
+    return unzipper.Open.file(zipPath).then(dir => {
+      const files = dir.files.map(file => file.path);
 
-    fs.createReadStream(zipPath)
-      .pipe(unzipper.ParseOne(/kitty.jpg/))
-      .on('entry', () => {
-        found = true;
-      })
-      .on('finish', () => {
-        expect(found).to.equal(true);
-        done();
-      })
-      .on('error', done);
+      expect(files).to.include.members(['kitty-1.jpg', 'kitty-2.jpg', 'kitty-3.jpg']);
+    });
   });
 });
 

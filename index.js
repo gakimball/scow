@@ -15,6 +15,7 @@ const uniq = require('lodash.uniq');
 const styleBroom = require('style-broom');
 const cheerio = require('cheerio');
 const mqPacker = require('css-mqpacker');
+const cssUrlParser = require('css-url-parser');
 
 const readFile = pify(fs.readFile);
 const juiceResources = pify(juice.juiceResources);
@@ -69,8 +70,26 @@ module.exports = (input, output, opts) => {
 
         return html;
       })
-      // Get all image paths referenced in in HTML
-      .then(html => [html, getImgSrc(html)])
+      // Get all image paths referenced in in HTML and CSS
+      .then(html => {
+        // This fetches every <img> with a src attribute
+        const imageSrcs = getImgSrc(html);
+
+        // This fetches every url() in a <style>
+        const $ = cheerio.load(html);
+        $('style').each((i, elem) => {
+          const css = elem.children[0].data;
+          imageSrcs.push(...cssUrlParser(css));
+        });
+
+        // This fetches every url() in an inline style
+        $('[style]').each((i, elem) => {
+          const css = $(elem).attr('style');
+          imageSrcs.push(...cssUrlParser(css));
+        });
+
+        return [html, imageSrcs];
+      })
       // Create ZIP file with HTML + image
       .then(res => {
         const html = res[0];
