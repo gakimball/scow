@@ -5,7 +5,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const expect = require('chai').expect;
+const {expect} = require('chai');
 const tempy = require('tempy');
 const unzipper = require('unzipper');
 const execa = require('execa');

@@ -35,6 +35,6 @@ const opts = {
 scow(cli.input[0], cli.input[1], opts).then(paths => {
   console.log(chalk.green(`${paths.length} bundle${paths.length !== 1 ? 's' : 's'} created.`));
   paths.map(path => console.log(chalk.gray(`  ${path}`)));
-}).catch(err => {
-  console.log(err);
+}).catch(error => {
+  console.log(error);
 });
