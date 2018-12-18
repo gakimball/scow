@@ -18,8 +18,11 @@ const cli = meow(`
   Examples
     $ scow emails/*.html dist
 `, {
-  alias: {
-    c: 'compress'
+  flags: {
+    compress: {
+      type: 'boolean',
+      alias: 'c'
+    }
   }
 });
 
