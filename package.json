@@ -28,11 +28,11 @@
   },
   "homepage": "https://github.com/gakimball/scow#readme",
   "devDependencies": {
-    "chai": "^3.5.0",
-    "execa": "^0.6.3",
-    "mocha": "^3.2.0",
-    "tempy": "^0.1.0",
-    "unzipper": "^0.8.8",
+    "chai": "^4.2.0",
+    "execa": "^1.0.0",
+    "mocha": "^5.2.0",
+    "tempy": "^0.2.1",
+    "unzipper": "^0.9.6",
     "xo": "^0.23.0"
   },
   "engines": {
