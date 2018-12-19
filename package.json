@@ -7,7 +7,7 @@
     "scow": "cli.js"
   },
   "scripts": {
-    "test": "xo && mocha"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
@@ -39,7 +39,13 @@
     "node": ">=6"
   },
   "xo": {
-    "space": true
+    "space": true,
+    "overrides": [
+      {
+        "files": "test/*.js",
+        "envs": ["node", "mocha"]
+      }
+    ]
   },
   "dependencies": {
     "chalk": "^2.4.1",
