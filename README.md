@@ -16,6 +16,7 @@ Point Scow at an HTML email (or a set of them), and it will:
   - Compress the HTML output, but preserve whitespace
   - Compress the CSS within `<style>` tags and `style` attributes
   - Merge identical media queries within `<style>` tags
+  - Merge all CSS into one `<style>` tag
 - Bundle the email and all assets linked to in `<img>` tags into one ZIP file
 
 ## Installation

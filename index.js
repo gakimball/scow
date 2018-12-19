@@ -8,6 +8,7 @@ const cwd = require('prepend-cwd');
 const mkdirp = require('mkdirp-promise');
 const inlineCss = require('./lib/inline-css');
 const removeUnusedCss = require('./lib/remove-unused-css');
+const combineStyleTags = require('./lib/combine-style-tags');
 const combineMediaQueries = require('./lib/combine-media-queries');
 const compressHtml = require('./lib/compress-html');
 const processImages = require('./lib/process-images');
@@ -41,6 +42,8 @@ module.exports = async (input, output, opts = {}) => {
       .then(contents => inlineCss(contents.toString(), fileName, opts))
       // Remove unused CSS
       .then(html => removeUnusedCss(html, fileName, opts))
+      // Merge <style> elements
+      .then(html => combineStyleTags(html, fileName, opts))
       // Merge media queries
       .then(html => combineMediaQueries(html, fileName, opts))
       // Compress HTML
