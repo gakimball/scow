@@ -4,7 +4,7 @@
   "description": "HTML email inliner and bundler",
   "main": "index.js",
   "bin": {
-    "scow": "cli.js"
+    "scow": "bin/scow.js"
   },
   "scripts": {
     "test": "xo && mocha"
