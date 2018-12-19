@@ -17,7 +17,7 @@ Point Scow at an HTML email (or a set of them), and it will:
   - Compress the CSS within `<style>` tags and `style` attributes
   - Merge identical media queries within `<style>` tags
   - Merge all CSS into one `<style>` tag
-- Bundle the email and all assets linked to in `<img>` tags into one ZIP file
+- Bundle the email, and all images referenced in `<img>` tags and CSS `url()` statements, into one ZIP file
 
 ## Installation
 
@@ -31,7 +31,7 @@ npm install scow
 const scow = require('scow');
 
 scow('newsletter.html', 'output').then(path => {
-  // => output/newsletter.zip
+  // => ['output/newsletter.zip']
 });
 ```
 
@@ -42,7 +42,7 @@ scow('newsletter.html', 'output').then(path => {
 Bundle one or more HTML emails into an equal number of ZIP files.
 
 - **input** (String or Array of Strings): HTML files(s) to bundle. Can be a path to one file, or a glob pattern matching multiple files. One ZIP bundle is made for each input file.
-- **output** (String): path to folder to output ZIP files to.
+- **output** (String): path to folder to output ZIP files to. The folder will be created if it doesn't exist.
 - **options** (Object): output options.
   - **compress** (Boolean): compress HTML, and CSS within `<style>` elements. Defaults to `false`.
 
