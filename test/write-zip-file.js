@@ -29,17 +29,16 @@ describe('writeZipFile', () => {
   });
 
   it('writes a ZIP file', done => {
-    fs.access(context.outputPath, (fs.constants || fs).F_OK, err => {
-      expect(err).to.equal(null);
+    fs.access(context.outputPath, (fs.constants || fs).F_OK, error => {
+      expect(error).to.equal(null);
       done();
     });
   });
 
-  it('bundles an HTML file and images into the ZIP archive', () => {
-    return unzipper.Open.file(context.outputPath).then(dir => {
-      const files = dir.files.map(file => file.path);
+  it('bundles an HTML file and images into the ZIP archive', async () => {
+    const dir = await unzipper.Open.file(context.outputPath);
+    const files = dir.files.map(file => file.path);
 
-      expect(files).to.include.members(['index.html', 'kitty-1.jpg', 'kitty-2.jpg']);
-    });
+    expect(files).to.include.members(['index.html', 'kitty-1.jpg', 'kitty-2.jpg']);
   });
 });

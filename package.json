@@ -7,7 +7,7 @@
     "scow": "cli.js"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "xo && mocha"
   },
   "repository": {
     "type": "git",
@@ -33,7 +33,7 @@
     "mocha": "^5.2.0",
     "tempy": "^0.2.1",
     "unzipper": "^0.9.6",
-    "xo": "^0.23.0"
+    "xo": "0.23.0"
   },
   "engines": {
     "node": ">=8"

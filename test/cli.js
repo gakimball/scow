@@ -13,35 +13,30 @@ const execa = require('execa');
 describe('scow CLI', () => {
   it('creates a ZIP file', done => {
     const outputDir = tempy.directory();
-    execa(path.join(__dirname, '../cli.js'), ['test/fixtures/*.html', outputDir])
-      .then(() => {
-        const zipPath = path.join(outputDir, 'index.zip');
+    const zipPath = path.join(outputDir, 'index.zip');
 
-        fs.access(zipPath, (fs.constants || fs).F_OK, err => {
-          expect(err).to.equal(null);
-          done();
-        });
-      })
-      .catch(done);
+    execa.sync(path.join(__dirname, '../cli.js'), ['test/fixtures/*.html', outputDir]);
+
+    fs.access(zipPath, (fs.constants || fs).F_OK, err => {
+      expect(err).to.equal(null);
+      done();
+    });
   });
 
   it('allows HTML to be compressed', done => {
     const outputDir = tempy.directory();
     const zipPath = path.join(outputDir, 'index.zip');
-    const test = () => {
-      fs.createReadStream(zipPath)
-        .pipe(unzipper.ParseOne(/index.html/))
-        .on('entry', entry => {
-          entry.buffer().then(contents => {
-            expect(contents.toString()).to.contain('<!doctype html>\n<html>\n<head>');
-            done();
-          }).catch(done);
-        })
-        .on('error', done);
-    };
 
-    execa(path.join(__dirname, '../cli.js'), ['test/fixtures/*.html', outputDir, '--compress'])
-      .then(test)
-      .catch(done);
+    execa.sync(path.join(__dirname, '../cli.js'), ['test/fixtures/*.html', outputDir, '--compress']);
+
+    fs.createReadStream(zipPath)
+      .pipe(unzipper.ParseOne(/index.html/))
+      .on('entry', async entry => {
+        const contents = await entry.buffer();
+
+        expect(contents.toString()).to.contain('<!doctype html>\n<html>\n<head>');
+        done();
+      })
+      .on('error', done);
   });
 });

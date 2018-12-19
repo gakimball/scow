@@ -30,10 +30,8 @@ describe('inlineCss()', () => {
   const filePath = path.join(__dirname, 'fixtures/index.html');
   let output;
 
-  before(() => {
-    return inlineCss(input, filePath).then(res => {
-      output = res;
-    });
+  before(async () => {
+    output = await inlineCss(input, filePath);
   });
 
   it('inlines CSS from a <style> tag into HTML', () => {

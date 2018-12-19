@@ -15,14 +15,19 @@ const writeZipFile = require('./lib/write-zip-file');
 
 const readFile = pify(fs.readFile);
 
-module.exports = (input, output, opts = {}) => {
-  input = cwd(input);
-  output = cwd(output);
-
+/**
+ * Create ZIP bundles for one or more HTML email. Each bundle will contain an inlined and compressed HTML file, and all images referenced in `<img>` tags.
+ * @param {(String|String[])} input - Glob pattern of HTML files.
+ * @param {String} output - Folder to write to. The folder will be created if it doesn't exist.
+ * @param {Object} [opts] - Bundle options.
+ * @param {Boolean} [opts.compress] - Compress HTML and consolidate media queries.
+ * @returns {Promise.<String[]>} Promise containing paths to ZIP bundles created.
+ */
+module.exports = async (input, output, opts = {}) => {
   /**
-   * Create a ZIP bundle for an HTML email. The bundle will contain an inlined and compressed HTML file, and all images referenced in `<img>` tags.
-   * @param {String} file - Path to HTML email.
-   * @returns {Promise.<(String|String[])>} Promise containing path(s) to ZIP file(s) created.
+   * Create a ZIP bundle for a single file.
+   * @param {String} fileName - Path to HTML email.
+   * @returns {Promise.<String>} Promise containing path to ZIP file created.
    */
   const bundle = fileName => {
     const baseFileName = path.basename(fileName, path.extname(fileName));
@@ -30,6 +35,7 @@ module.exports = (input, output, opts = {}) => {
       outputPath: path.join(output, `${baseFileName}.zip`)
     };
 
+    /* eslint-disable promise/prefer-await-to-then */
     return readFile(fileName)
       // Inline CSS into HTML
       .then(contents => inlineCss(contents.toString(), fileName, opts))
@@ -45,11 +51,12 @@ module.exports = (input, output, opts = {}) => {
       .then(html => writeZipFile(html, fileName, opts, context))
       // Return the path of the ZIP file
       .then(() => context.outputPath)
-      .catch(err => console.log(err));
+      .catch(error => console.log(error));
+    /* eslint-enable promise/prefer-await-to-then */
   };
 
-  // Find each input file and create a ZIP file for it
-  return mkdirp(output)
-    .then(() => globby(input))
-    .then(paths => Promise.all(paths.map(bundle)));
+  await mkdirp(cwd(output));
+  const paths = await globby(cwd(input));
+
+  return Promise.all(paths.map(bundle));
 };

@@ -1,5 +1,4 @@
 const {expect} = require('chai');
-const cheerio = require('cheerio');
 const combineMediaQueries = require('../lib/combine-media-queries');
 
 const input = `

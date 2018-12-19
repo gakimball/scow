@@ -18,7 +18,7 @@ describe('processImages()', () => {
   });
 
   it('finds images referenced in <style>', () => {
-    const input = `<style>.one { background-color: url('image.jpg') }</style>`;
+    const input = '<style>.one { background-color: url(\'image.jpg\') }</style>';
     const context = {};
     processImages(input, '', {}, context);
 
@@ -26,7 +26,7 @@ describe('processImages()', () => {
   });
 
   it('finds images referenced in <style>', () => {
-    const input = `<div style="background-color: url('image.jpg')"></div>`;
+    const input = '<div style="background-color: url(\'image.jpg\')"></div>';
     const context = {};
     processImages(input, '', {}, context);
 
