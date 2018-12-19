@@ -6,7 +6,7 @@
 
 const meow = require('meow');
 const chalk = require('chalk');
-const scow = require('.');
+const scow = require('..');
 
 const cli = meow(`
   Usage
