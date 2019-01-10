@@ -21,7 +21,7 @@ const input = `
 `;
 
 describe('combineStyleTags()', () => {
-  it.only('merges CSS into one style tag', () => {
+  it('merges CSS into one style tag', () => {
     const output = combineStyleTags(input, '', {
       compress: true
     });
@@ -30,7 +30,5 @@ describe('combineStyleTags()', () => {
     expect(output).to.contain('.one');
     expect(output).to.contain('.two');
     expect(styleTags).to.have.lengthOf(1);
-
-    console.log(output);
   });
 });

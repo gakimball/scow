@@ -15,7 +15,7 @@ describe('scow CLI', () => {
     const outputDir = tempy.directory();
     const zipPath = path.join(outputDir, 'index.zip');
 
-    execa.sync(path.join(__dirname, '../cli.js'), ['test/fixtures/*.html', outputDir]);
+    execa.sync(path.join(__dirname, '../bin/scow.js'), ['test/fixtures/*.html', outputDir]);
 
     fs.access(zipPath, (fs.constants || fs).F_OK, err => {
       expect(err).to.equal(null);
@@ -27,7 +27,7 @@ describe('scow CLI', () => {
     const outputDir = tempy.directory();
     const zipPath = path.join(outputDir, 'index.zip');
 
-    execa.sync(path.join(__dirname, '../cli.js'), ['test/fixtures/*.html', outputDir, '--compress']);
+    execa.sync(path.join(__dirname, '../bin/scow.js'), ['test/fixtures/*.html', outputDir, '--compress']);
 
     fs.createReadStream(zipPath)
       .pipe(unzipper.ParseOne(/index.html/))
